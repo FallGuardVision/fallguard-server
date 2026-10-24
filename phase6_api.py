@@ -17,8 +17,14 @@ from typing import List
 
 from posture_verification import PostureVerifier
 
-MODEL_PATH = r"D:\FYP\models\fall_detection_bilstm_v2_fixed.keras"
-DB_PATH = r"D:\FYP\events.db"
+import os
+
+MODEL_PATH = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "model",
+    "fall_detection_bilstm_v2_fixed.keras",
+)
+DB_PATH = os.environ.get("DB_PATH", "events.db")
 
 CLASS_NAMES = ["STABLE", "HIGH_RISK", "FALL", "IMMOBILE"]
 ALERT_CLASSES = {"HIGH_RISK", "FALL", "IMMOBILE"}  # states worth logging as events
@@ -29,7 +35,10 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=os.environ.get(
+        "ALLOWED_ORIGINS",
+        "http://localhost:5173,http://127.0.0.1:5173",
+    ).split(","),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
