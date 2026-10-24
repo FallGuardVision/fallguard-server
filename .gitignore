@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+
+# Database (don't commit production data)
+events.db
+
+# IDE
+.vscode/
+.idea/
