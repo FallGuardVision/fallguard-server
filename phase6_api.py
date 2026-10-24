@@ -18,6 +18,9 @@ from typing import List
 from posture_verification import PostureVerifier
 
 import os
+import tempfile
+import zipfile
+from pathlib import Path
 
 MODEL_PATH = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
@@ -138,7 +141,21 @@ def get_recent_events(limit: int = 50, patient_id: int = None):
 init_db()
 
 print("Loading model...")
-model = tf.keras.models.load_model(MODEL_PATH)
+model_path = Path(MODEL_PATH)
+if model_path.is_dir():
+    with tempfile.NamedTemporaryFile(suffix=".keras", delete=False) as archive_file:
+        model_archive_path = Path(archive_file.name)
+
+    try:
+        with zipfile.ZipFile(model_archive_path, "w") as model_archive:
+            for model_file in model_path.iterdir():
+                if model_file.is_file():
+                    model_archive.write(model_file, arcname=model_file.name)
+        model = tf.keras.models.load_model(str(model_archive_path))
+    finally:
+        model_archive_path.unlink(missing_ok=True)
+else:
+    model = tf.keras.models.load_model(str(model_path))
 print("Model loaded.")
 
 
