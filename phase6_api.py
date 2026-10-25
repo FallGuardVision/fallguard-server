@@ -38,7 +38,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=r"^https://[a-z0-9-]+-swasthikaponnusamy-5347s-projects\.vercel\.app$",
+    allow_origin_regex=r"^https?://.*",
     allow_origins=os.environ.get(
         "ALLOWED_ORIGINS",
         "http://localhost:5173,http://127.0.0.1:5173,https://fallguard-ui.vercel.app",
